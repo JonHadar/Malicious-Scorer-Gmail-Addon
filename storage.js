@@ -1,5 +1,6 @@
 const BLACKLIST_KEY = 'USER_BLACKLIST';
 const HISTORY_KEY_PREFIX = 'SCAN_HISTORY_';
+const MAX_REMEMBERED_MESSAGES = 100;
 
 function getBlacklist() {
   var userProperties = PropertiesService.getUserProperties();
@@ -36,15 +37,31 @@ function removeFromBlacklist(domain) {
   return list;
 }
 
-function recordScan(domain) {
+//Records a scan of an email from the domain and returns how many different emails from it were scanned.
+//Each email is counted once, so reopening the same email or pressing Refresh does not change the count.
+function recordScan(domain, messageId) {
   var userProperties = PropertiesService.getUserProperties();
   var key = HISTORY_KEY_PREFIX + domain;
   
-  var count = userProperties.getProperty(key);
+  var stored = userProperties.getProperty(key);
+  var history = { count: 0, messageIds: [] };
   
-  count = count ? parseInt(count) + 1 : 1;
+  if (stored) {
+    //Earlier versions stored only a number
+    history = isNaN(stored) ? JSON.parse(stored) : { count: parseInt(stored), messageIds: [] };
+  }
   
-  userProperties.setProperty(key, count.toString());
+  if (history.messageIds.indexOf(messageId) === -1) {
+    history.count++;
+    history.messageIds.push(messageId);
+    
+    //Remember only the most recent emails, so the stored value stays small
+    if (history.messageIds.length > MAX_REMEMBERED_MESSAGES) {
+      history.messageIds.shift();
+    }
+    
+    userProperties.setProperty(key, JSON.stringify(history));
+  }
   
-  return count;
+  return history.count;
 }
