@@ -68,7 +68,7 @@ function analyzeEmailData(messageId, accessToken) {
   }
 
   //Rule 5: Tracking scan history
-  var scanCount = recordScan(domain);
+  var scanCount = recordScan(domain, messageId);
   
   if (scanCount === 1) {
     analysis.score += 5;
