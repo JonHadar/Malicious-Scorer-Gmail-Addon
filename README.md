@@ -2,6 +2,12 @@
 
 A Google Workspace add-on that lives in Gmail's side panel and acts as a real-time **phishing analyzer**. Every time you open an email, it calculates a **risk score from 0 to 100**, explains exactly why, and checks the sender's domain against **VirusTotal**'s global threat intelligence. It's built entirely on Google Apps Script, with no servers to run.
 
+<p align="center">
+  <img src="docs/screenshots/result-card.png" alt="Result card: SAFE, risk score 20 of 100, sender domain google.com, one VirusTotal vendor flag and a first-time sender" width="300">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/blacklist.png" alt="Manage Blacklist card: a field to add a domain and four blocked domains with remove buttons" width="300">
+</p>
+
 | Verdict | Score |
 |---|---|
 | 🟢 CLEAN | 0 |
@@ -33,12 +39,14 @@ Five rules run on the open email; each adds points and a human-readable reason:
 
 The total is limited to 0–100. Sender history counts each email once, so reopening an email or pressing **Refresh Score** doesn't change it.
 
+**Example** (left screenshot above). An email from `google.com` scores **20 → 🟡 SAFE**: one VirusTotal vendor flags the domain (+15), and it's the first email scanned from that domain (+5). A single vendor's flag on a well-known domain is usually a false positive, so on its own it isn't enough to make an email suspicious; the thresholds are set so that several signals have to add up.
+
 ## Features
 
 - **Real-time risk scoring** shown in the Gmail side panel as soon as an email is opened, on the web and in the Gmail mobile apps.
 - **Explainability:** an *Analysis Reasons* section lists every factor behind the score, not just the number.
 - **Threat intelligence:** a live VirusTotal lookup of the sender's domain on every scan.
-- **Personal blacklist:** add or remove domains from a settings card; the list updates on screen immediately and is stored per user.
+- **Personal blacklist:** add or remove domains from a settings card (right screenshot above); the list updates on screen immediately and is stored per user.
 - **Refresh Score** recalculates the current email, for example after you change the blacklist.
 
 ## Architecture
@@ -69,6 +77,7 @@ flowchart LR
 | `scoreAnalyzer.js` | Reads the open email, extracts the sender's domain, applies the five rules, decides the verdict |
 | `api.js` | VirusTotal lookup of a domain (number of vendors that flag it) |
 | `storage.js` | Blacklist add/remove and sender history, in User Properties |
+| `docs/screenshots/` | Images used in this README (not uploaded to Apps Script) |
 | `README.js` | Project notes kept inside the Apps Script editor (which can't hold Markdown files) |
 
 ## Permissions
