@@ -1,0 +1,5 @@
+# clasp login credentials (normally in the home folder; never commit them)
+.clasprc.json
+
+# OS files
+.DS_Store

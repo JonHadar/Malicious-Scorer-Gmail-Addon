@@ -1,0 +1,25 @@
+{
+  "timeZone": "Asia/Jerusalem",
+  "dependencies": {},
+  "exceptionLogging": "STACKDRIVER",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/gmail.addons.current.message.readonly",
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/script.locale"
+  ],
+  "runtimeVersion": "V8",
+  "addOns": {
+    "common": {
+      "name": " Malicious Scorer",
+      "logoUrl": "https://img.icons8.com/?size=100&id=65362&format=png&color=000000",
+      "useLocaleFromApp": true
+    },
+    "gmail": {
+      "contextualTriggers": [{
+        "unconditional": {},
+        "onTriggerFunction": "buildMainCard"
+      }]
+    }
+  }
+}
